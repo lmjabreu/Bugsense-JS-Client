@@ -10,6 +10,8 @@
     } else {
         // Browser globals
         root.Bugsense = factory();
+        // use the initializer defined in root
+        if ( root.bugsenseInit ) { root.bugsenseInit(); }
     }
 }( this, function () {
 
@@ -94,7 +96,7 @@
    * @param  {Object} XHR        XHR object
    */
   Bugsense.prototype.successHandler = function bugsenseSuccessHandler ( request ) {
-    if ( request.target && request.target.readyState != 4 )  { return; }
+    if ( request.target && request.target.readyState !== 4 )  { return; }
     // some console.log implementations don't support multiple parameters, guess it's okay in this case to concatenate
     if ( 'console' in window ) { console.log( 'logged 1 error to Bugsense, status: ' + request.target.responseText ); }
   };
@@ -159,20 +161,20 @@
         'where'     : [ url, line ].join( ':' ),
         'klass'     : message.split( ':' )[ 0 ],
         // Optional
-        'backtrace' : ''
+        'backtrace' : ( stack ) ? stack : message
       },
       // basic data ( required )
       application_environment: {
         // Obligatory
         'phone'              : window.navigator.platform,
-        'appver'             : ( this.config.appversion || 'unknown' ),
-        'appname'            : ( this.config.appname || 'unknown' ),
-        'osver'              : ( typeof window.device !== 'undefined' ) ? window.device.version : ( window.navigator.userAgent.match( /\(.*;\s(.*)\)\s.*\(.*\)/)[1] || 'unknown' ),
+        'appver'             : ( this.config.appVersion || 'unknown' ),
+        'appname'            : ( this.config.appName || 'unknown' ),
+        'osver'              : ( window.device ) ? window.device.version : ( window.navigator.userAgent.match( /\(.*;\s(.*)\)\s.*\(.*\)/)[1] || 'unknown' ),
         // Optional
-        'connection_type'    : ( typeof window.navigator.network !== 'undefined' ) ? window.navigator.network.connection.type : 'unknown',
+        'connection_type'    : ( window.navigator.network ) ? window.navigator.network.connection.type : 'unknown',
         'user_agent'         : window.navigator.userAgent,
-        'cordova'            : ( typeof window.device !== 'undefined' ) ? window.device.cordova : 'unknown',
-        'device_name'        : ( typeof window.device !== 'undefined' ) ? window.device.name : 'unknown'
+        'cordova'            : ( window.device ) ? window.device.cordova : 'unknown',
+        'device_name'        : ( window.device ) ? window.device.name : 'unknown'
       }
     };
   };
