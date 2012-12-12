@@ -173,7 +173,7 @@
         'appname'            : ( this.config.appName || 'unknown' ),
         'osver'              : ( window.device ) ? window.device.version : ( window.navigator.userAgent.match( /\(.*;\s(.*)\)\s.*\(.*\)/)[1] || 'unknown' ),
         // Optional
-        'connection_type'    : ( window.navigator.network ) ? window.navigator.network.connection.type : 'unknown',
+        'connection_type'    : ( window.navigator.connection ) ? window.navigator.connection.type : 'unknown',
         'user_agent'         : window.navigator.userAgent,
         'cordova'            : ( window.device ) ? window.device.cordova : 'unknown',
         'device_name'        : ( window.device ) ? window.device.name : 'unknown'
