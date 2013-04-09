@@ -501,7 +501,7 @@ var bugsense;
   };
 
   /**
-    * Send cashed crash report
+    * Send cached crash report
     */
   Bugsense.prototype.send_cached_report_if_any = function bugsenseSendCachedReport () {
     var local = WinJS.Application.local;
@@ -536,7 +536,7 @@ var bugsense;
       return false;
     }
 
-    return root.Bugsense.notify( exception, url, line, custom_data );
+    return root.Bugsense.notify.apply( root.Bugsense, [ exception, url, line, custom_data ] );
   };
 
   Bugsense.prototype.onpromiseerror = function bugsenseonpromiseerror ( event ) {
@@ -545,7 +545,7 @@ var bugsense;
       return false;
     }
 
-    return root.Bugsense.notify( event.detail.exception, event.detail.promise );
+    return root.Bugsense.notify.apply( root.Bugsense, [ event.detail.exception, event.detail.promise ] );
   };
 
   return Bugsense;

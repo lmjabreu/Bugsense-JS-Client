@@ -6,31 +6,55 @@
 
 Store the bugsense.js file along with you other Javascript files. Alternatively you can use the BugSense hosted version (see the following snipper).
 
-```html
- <script src="http://www.bugsense.com/static/js/global/bugsense.js" type='text/javascript'></script>
- <script type="text/javascript">
-    // You will find the API KEY in your BugSense Dashboard
-    var bugsense = new Bugsense( { apiKey: 'YOUR_API_KEY' } );
- </script>
+``` html
+  <!-- start Bugsense -->
+  <script>
+    !(function ( document, window ) {
+      var script = document.createElement( 'script' ),
+          bugsense;
+          script.type = 'text/javascript'
+          script.async = true;
+          script.src = 'http://www.bugsense.com/static/js/global/bugsense.js';
+          document.getElementsByTagName( 'head' )[ 0 ].appendChild( script );
+
+          // Initialize the tracker when the script loads
+          script.onreadystatechange = script.onload = function bugsenseInit () {
+            // Init the Bugsense client
+            bugsense = new Bugsense( {
+              apiKey: 'YOUR_API_KEY',
+              appName: 'YOUR_APP_NAME',
+              appVersion: 'APP_VERSION'
+            } );
+            // Setup error handler
+            window.onerror = function ( exception, url, line ) {
+              bugsense.notify.apply( bugsense, [ exception, url, line ] );
+              return true;
+            };
+          }
+
+    }(document, window));
+  </script>
+  <!-- end Bugsense -->
 ```
 
 **Notes**:
 
-* Older browser do not support the <i>window.onerror</i> callback and thefore the plugin will not receive any uncaught exception. 
+* Older browsers do not support the <i>window.onerror</i> callback and thefore the plugin will not receive any uncaught exception.
 * When there's only the Error object caught, error.stack will be parsed to get the url and line number.
 * Deobfuscation or retracing for minified and/or obfuscated Javascript files is not supported yet.
 * Bugsense.js uses CORS to send crash reports.
 
 
 ## Registering handled exceptions
+
 Bugsense.js allows you to register handled exception as well and append metadata to the crash report.
 
 
 ```js
-try { 
-   rotateScreen(); 
-} catch ( error ) { 
-   bugsense.notify( error, { rotation: 'not supported' } ) 
+try {
+   rotateScreen();
+} catch ( error ) {
+   bugsense.notify( error, { rotation: 'not supported' } )
 };
 ```
 
