@@ -11,6 +11,50 @@ var bugsense;
 }( this, function factory ( root ) {
 
   /**
+   * Because Object.keys is not available in all browsers, specifically IE7/8, we are creating a
+   * prototype to be used later.
+   */
+  Object.keys = Object.keys || (function () {
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+        hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+        dontEnums = [
+          'toString',
+          'toLocaleString',
+          'valueOf',
+          'hasOwnProperty',
+          'isPrototypeOf',
+          'propertyIsEnumerable',
+          'constructor'
+        ],
+        dontEnumsLength = dontEnums.length;
+
+    return function (obj) {
+      if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
+
+      var result = [];
+
+      for (var prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) result.push(prop);
+      }
+
+      if (hasDontEnumBug) {
+        for (var i=0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) result.push(dontEnums[i]);
+        }
+      }
+      return result;
+    }
+  })();
+
+  if (!('forEach' in Array.prototype)) {
+    Array.prototype.forEach= function(action, that /*opt*/) {
+        for (var i= 0, n= this.length; i<n; i++)
+            if (i in this)
+                action.call(that, this[i], i, this);
+    };
+  }
+
+  /**
    * Simple extend() implementation
    * @param  {Object} original The object to extend
    * @param  {Object} extra    The properties to extend with
@@ -47,7 +91,7 @@ var bugsense;
   };
 
   var serialize = function serialize ( params, obj, traditional, scope ) {
-    var array = isArray( obj );
+    var array = l( obj );
 
     forEach( obj, function ( key, value ) {
       if ( scope ) { key = traditional ? scope : scope + '[' + (array ? '' : key) + ']'; }
